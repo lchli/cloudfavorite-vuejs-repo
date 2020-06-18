@@ -1,9 +1,13 @@
 <template>
+  <q-layout>
+    <q-page-container>
   <q-page class="flex flex-center column">
     <q-input square filled v-model="name" placeholder="输入账号"></q-input>
     <q-input square filled v-model="pwd" placeholder="输入密码" id="pwdbt"></q-input>
     <q-btn color="primary" label="注册" id="btn" @click="register()"/>
   </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 <script>
 import { LocalStorage } from 'quasar'

@@ -1,9 +1,16 @@
 <template>
+  <q-layout>
+  <q-page-container>
   <q-page class="flex flex-center column">
     <q-input square filled v-model="name" placeholder="输入账号"></q-input>
     <q-input square filled v-model="pwd" placeholder="输入密码" id="pwdbt"></q-input>
+    <q-item>
     <q-btn color="primary" label="登录" id="btn" @click="register()"/>
+    <q-btn color="primary" label="去注册" id="btn-toreg" @click="gotoRegister()"/>
+    </q-item>
   </q-page>
+  </q-page-container>
+  </q-layout>
 </template>
 <script>
 import { LocalStorage } from 'quasar'
@@ -45,7 +52,11 @@ export default {
         .finally(function () {
           // always executed
           console.log('always executed')
+          rt.push('/index')
         })
+    },
+    gotoRegister: function () {
+      this.$router.push('/register')
     }
   }
 }
@@ -58,6 +69,11 @@ export default {
 
   #btn {
     margin-top: 10px;
+  }
+
+  #btn-toreg {
+    margin-top: 10px;
+    margin-left: 50px;
   }
 
 </style>

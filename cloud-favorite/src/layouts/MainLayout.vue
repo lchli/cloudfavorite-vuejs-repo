@@ -1,78 +1,64 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
+  <div class="q-pa-md">
+    <q-layout view="lHh lpr lFf" >
 
-        <q-toolbar-title>
-          航哥网址云收藏
-        </q-toolbar-title>
+      <q-footer bordered class="bg-white text-primary">
+        <q-tabs no-caps active-color="white" indicator-color="transparent" class="bg-primary text-grey-5 shadow-2" v-model="tab">
+          <q-tab name="posts" label="帖子" />
+          <q-tab name="tools" label="工具" />
+          <q-tab name="my" label="我的" />
+        </q-tabs>
+      </q-footer>
 
-        <div v-if="userName!=null">用户{{userName}}</div>
-        <div v-if="userName!=null" @click="logout" class="menu">退出登录</div>
-        <div v-if="userName===null" @click="gotoLogin" class="menu">登录</div>
-        <div v-if="userName===null" @click="gotoRegister"  class="menu">注册</div>
+      <q-page-container>
+        <q-page class="q-pa-md">
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="posts" class="q-pa-none">
+              <posts :urls="urls"></posts>
+            </q-tab-panel>
 
-      </q-toolbar>
-    </q-header>
+            <q-tab-panel name="tools">
+              <div class="text-h6">Alarms</div>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </q-tab-panel>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          菜单
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
+            <q-tab-panel name="my">
+              <div class="text-h6">Movies</div>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-page>
+      </q-page-container>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+      <q-page-sticky position="bottom-right" :offset="[18, 18]">
+        <q-btn fab icon="add" color="primary" />
+      </q-page-sticky>
+    </q-layout>
+  </div>
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink'
 import { LocalStorage } from 'quasar'
+import posts from '../components/posts.vue'
 
 export default {
   name: 'MainLayout',
-
   components: {
-    EssentialLink
+    posts
   },
   mounted () {
     this.$EventBus.$on('login', (msg) => {
       // A发送来的消息
       this.userName = LocalStorage.getItem('userName')
-      this.essentialLinks = [
+      this.urls = [
         {
           title: '添加收藏',
-          icon: 'school',
+          uid: 'school',
           link: '/'
         },
         {
           title: '我的收藏',
-          icon: 'code',
+          uid: 'code',
           link: '/#/urlList'
         }
       ]
@@ -82,18 +68,21 @@ export default {
     return {
       leftDrawerOpen: false,
       userName: LocalStorage.getItem('userName'),
-      essentialLinks: LocalStorage.getItem('userName') != null ? [
+      urls: [
         {
           title: '添加收藏',
-          icon: 'school',
+          uid: 'school',
           link: '/'
         },
         {
           title: '我的收藏',
-          icon: 'code',
+          uid: 'code',
           link: '/#/urlList'
         }
-      ] : []
+      ],
+      tab: 'posts',
+      innerTab: 'innerMails',
+      splitterModel: 20
     }
   },
   computed: {
@@ -121,8 +110,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .menu {
-    margin-left: 10px;
+  .q-tabs {
   }
 
 </style>

@@ -2,14 +2,19 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Index.vue') },
-      { path: '/urlList', component: () => import('pages/UrlList.vue') },
-      { path: '/login', component: () => import('pages/Login.vue') },
-      { path: '/register', component: () => import('pages/register.vue') }
-    ]
-  }
+    component: () => import('pages/Login.vue')
+    // children: [
+    //   { path: '', component: () => import('pages/index.vue') },
+    //   { path: '/urlList', component: () => import('pages/UrlList.vue') },
+    //   { path: '/login', component: () => import('pages/Login.vue') },
+    //   { path: '/register', component: () => import('pages/register.vue') }
+    // ]
+  },
+  {
+    path: '/index',
+    component: () => import('layouts/MainLayout.vue')
+  },
+  { path: '/register', component: () => import('pages/register.vue') }
 ]
 
 // Always leave this as last one

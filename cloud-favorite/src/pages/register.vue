@@ -10,8 +10,7 @@
   </q-layout>
 </template>
 <script>
-import { LocalStorage } from 'quasar'
-
+import { LocalStorage, Notify } from 'quasar'
 export default {
   data () {
     return {
@@ -24,15 +23,17 @@ export default {
       const data = new FormData()
       data.append('pwd', this.pwd)
       data.append('account', this.name)
-      const bus = this.$EventBus
+      // const bus = this.$EventBus
       const rt = this.$router
       this.$axios.post('/api/user/register', data).then(function (response) {
         // handle success
         console.log(response.data)
         if (response.data == null) {
+          Notify.create('服务器错误')
           return
         }
-        if (response.data.code === '-1') {
+        if (response.data.code !== '1') {
+          Notify.create(response.data.errmsg)
           return
         }
 
@@ -40,12 +41,13 @@ export default {
         LocalStorage.set('userName', response.data.account)
         LocalStorage.set('token', response.data.token)
 
-        bus.$emit('login', '1')
-        rt.push('/')
+        // bus.$emit('login', '1')
+        rt.replace('/index')
       })
         .catch(function (error) {
           // handle error
           console.log(error)
+          Notify.create('加载失败')
         })
         .finally(function () {
           // always executed

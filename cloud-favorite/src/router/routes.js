@@ -14,7 +14,8 @@ const routes = [
     path: '/index',
     component: () => import('layouts/MainLayout.vue')
   },
-  { path: '/register', component: () => import('pages/register.vue') }
+  { path: '/register', component: () => import('pages/register.vue') },
+  { path: '/writePost', component: () => import('pages/index.vue') }
 ]
 
 // Always leave this as last one

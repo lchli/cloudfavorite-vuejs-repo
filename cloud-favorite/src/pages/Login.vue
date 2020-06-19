@@ -13,7 +13,7 @@
   </q-layout>
 </template>
 <script>
-import { LocalStorage } from 'quasar'
+import { LocalStorage, Notify } from 'quasar'
 
 export default {
   data () {
@@ -32,9 +32,11 @@ export default {
         // handle success
         console.log(response.data)
         if (response.data == null) {
+          Notify.create('服务器错误')
           return
         }
-        if (response.data.code === '-1') {
+        if (response.data.code !== '1') {
+          Notify.create(response.data.errmsg)
           return
         }
 
@@ -43,16 +45,16 @@ export default {
         LocalStorage.set('token', response.data.token)
 
         bus.$emit('login', '1')
-        rt.push('/')
+        rt.replace('/index')
       })
         .catch(function (error) {
           // handle error
           console.log(error)
+          Notify.create('加载失败')
         })
         .finally(function () {
           // always executed
           console.log('always executed')
-          rt.push('/index')
         })
     },
     gotoRegister: function () {

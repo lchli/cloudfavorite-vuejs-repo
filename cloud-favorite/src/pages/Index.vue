@@ -1,13 +1,17 @@
 <template>
+  <q-layout>
+    <q-page-container>
   <q-page class="flex flex-center column">
     <q-input square filled v-model="title" placeholder="输入标题"></q-input>
     <q-input square filled v-model="url" placeholder="输入网址"></q-input>
     <q-btn color="primary" label="添加" id="btn" @click="add" />
   </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script>
-import { LocalStorage } from 'quasar'
+import { LocalStorage, Notify } from 'quasar'
 
 export default {
   name: 'PageIndex',
@@ -21,7 +25,7 @@ export default {
         return
       }
       if (this.url == null || this.url === '') {
-        alert('url为空')
+        Notify.create('url为空')
         return
       }
       this.sendAd()
@@ -32,23 +36,25 @@ export default {
       data.append('url', this.url)
       data.append('userId', LocalStorage.getItem('userId'))
       data.append('token', LocalStorage.getItem('token'))
+      const R = this.$router
       this.$axios.post('/api/fav/add', data).then(function (response) {
         // handle success
         console.log(response.data)
         if (response.data == null) {
-          alert('添加失败')
+          Notify.create('服务器错误')
           return
         }
         if (response.data.code === '-1') {
-          alert(response.data.errmsg)
+          Notify.create(response.data.errmsg)
           return
         }
-        alert('添加成功')
+        Notify.create('添加成功')
+        R.replace('/index')
       })
         .catch(function (error) {
           // handle error
           console.log(error)
-          alert('添加失败')
+          Notify.create('服务器错误')
         })
         .finally(function () {
           // always executed

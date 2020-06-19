@@ -49,7 +49,7 @@ module.exports = function (ctx) {
 
       // Quasar plugins
       plugins: ['LocalStorage',
-        'SessionStorage', 'Dialog']
+        'SessionStorage', 'Dialog', 'Notify']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
@@ -90,7 +90,7 @@ module.exports = function (ctx) {
       proxy: {
         // 将所有以/api开头的请求代理到jsonplaceholder
         '/api': {
-          target: 'http://localhost:40100/',
+          target: 'http://localhost:8080/',
           changeOrigin: true,
           pathRewrite: {
             '^/api': '/api'

@@ -5,7 +5,6 @@
       <q-footer bordered class="bg-white text-primary">
         <q-tabs no-caps active-color="white" indicator-color="transparent" class="bg-primary text-grey-5 shadow-2" v-model="tab">
           <q-tab name="posts" label="帖子" />
-          <q-tab name="tools" label="工具" />
           <q-tab name="my" label="我的" />
         </q-tabs>
       </q-footer>
@@ -17,28 +16,24 @@
               <posts :urls="urls"></posts>
             </q-tab-panel>
 
-            <q-tab-panel name="tools">
-              <div class="text-h6">Alarms</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </q-tab-panel>
-
             <q-tab-panel name="my">
-              <div class="text-h6">Movies</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              <div >用户：{{userName}}</div>
+              <div >我的帖子</div>
+              <div @click="logout()">退出登录</div>
             </q-tab-panel>
           </q-tab-panels>
         </q-page>
       </q-page-container>
 
       <q-page-sticky position="bottom-right" :offset="[18, 18]">
-        <q-btn fab icon="add" color="primary" />
+        <q-btn fab icon="add" color="primary" @click="gotoWritePost()" />
       </q-page-sticky>
     </q-layout>
   </div>
 </template>
 
 <script>
-import { LocalStorage } from 'quasar'
+import { LocalStorage, Notify } from 'quasar'
 import posts from '../components/posts.vue'
 
 export default {
@@ -47,39 +42,16 @@ export default {
     posts
   },
   mounted () {
-    this.$EventBus.$on('login', (msg) => {
-      // A发送来的消息
-      this.userName = LocalStorage.getItem('userName')
-      this.urls = [
-        {
-          title: '添加收藏',
-          uid: 'school',
-          link: '/'
-        },
-        {
-          title: '我的收藏',
-          uid: 'code',
-          link: '/#/urlList'
-        }
-      ]
-    })
+    // this.$EventBus.$on('login', (msg) => {
+    //   // A发送来的消息
+    //   this.userName = LocalStorage.getItem('userName')
+    // })
+    this.getList()
   },
   data () {
     return {
-      leftDrawerOpen: false,
       userName: LocalStorage.getItem('userName'),
-      urls: [
-        {
-          title: '添加收藏',
-          uid: 'school',
-          link: '/'
-        },
-        {
-          title: '我的收藏',
-          uid: 'code',
-          link: '/#/urlList'
-        }
-      ],
+      urls: [],
       tab: 'posts',
       innerTab: 'innerMails',
       splitterModel: 20
@@ -88,21 +60,43 @@ export default {
   computed: {
   },
   methods: {
-    gotoLogin: function () {
-      this.$router.push('/login')
+    logout () {
+      LocalStorage.remove('userId')
+      LocalStorage.remove('userName')
+      LocalStorage.remove('token')
+      this.$router.replace('/')
+    },
+    gotoWritePost () {
+      this.$router.replace('/writePost')
     },
     gotoRegister: function () {
       this.$router.push('/register')
     },
-    logout: function () {
-      LocalStorage.remove('userId')
-      LocalStorage.remove('userName')
-      LocalStorage.remove('token')
-
-      this.userName = LocalStorage.getItem('userName')
-      this.essentialLinks = []
-
-      this.$router.push('/login')
+    getList: function () {
+      const data = { params: { userId: LocalStorage.getItem('userId'), token: LocalStorage.getItem('token') } }
+      this.$axios.get('/api/fav/queryFavs', data).then(function (response) {
+        // handle success
+        console.log(response.data)
+        if (response.data == null) {
+          Notify.create('加载失败')
+          return
+        }
+        if (response.data.code !== '1') {
+          Notify.create(response.data.errmsg)
+          return
+        }
+        console.log(response.data.items)
+        this.urls = response.data.items
+      }.bind(this))
+        .catch(function (error) {
+          // handle error
+          console.log(error)
+          Notify.create('加载失败')
+        })
+        .finally(function () {
+          // always executed
+          console.log('always executed')
+        })
     }
   }
 
